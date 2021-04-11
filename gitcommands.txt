@@ -1,0 +1,15 @@
+Main Git commands
+Initial setup
+pi@robot:~/Programme/Homesystem $ git config --global user.email "jens.thielemannn@gmail.com"
+pi@robot:~/Programme/Homesystem $ git config --global user.name "jens-th-user"
+Download code
+pi@robot:~/Programme $ git clone https://github.com/jens-th-user/Homesystem.git
+Display changes
+pi@robot:~/Programme/Homesystem $ git diff
+pi@robot:~/Programme/Homesystem $ git status
+Prepare changed files for commit:
+pi@robot:~/Programme/Homesystem $ git add <file>
+Commit to local repository
+pi@robot:~/Programme/Homesystem $ git commit -m "<message>"
+Commit or Push to remote repository
+pi@robot:~/Programme/Homesystem $ git push
