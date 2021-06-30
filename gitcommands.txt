@@ -1,7 +1,8 @@
 Main Git commands
 Initial setup
-pi@robot:~/Programme/Homesystem $ git config --global user.email "jens.thielemannn@gmail.com"
+pi@robot:~/Programme/Homesystem $ git config --global user.email "jens.thielemann@gmail.com"
 pi@robot:~/Programme/Homesystem $ git config --global user.name "jens-th-user"
+pi@robot:~/Programme/Homesystem $ git config --global user.password "your password"
 Download code
 pi@robot:~/Programme $ git clone https://github.com/jens-th-user/Homesystem.git
 Display changes
