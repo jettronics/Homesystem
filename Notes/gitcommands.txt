@@ -14,3 +14,5 @@ Commit to local repository
 pi@robot:~/Programme/Homesystem $ git commit -m "<message>"
 Commit or Push to remote repository
 pi@robot:~/Programme/Homesystem $ git push
+Update local repository from remote repository
+pi@robot:~/Programme/Homesystem $ git pull
