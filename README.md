@@ -12,6 +12,6 @@ Radio streaming can be controlled as mentioned above by different ways
 * Smart Phone - A browser interface is provided by NodeRED
 * Remote Controller - A FM based controller to control the radio player on Central unit.
 
-With the MPD player running on Central unit a list of radio streaming provides can be selected.  
+With the MPD (Music Player Daemon) player running on Central unit a list of radio streaming provides can be selected.  
 For further technical details see Wiki page.
 ## Operation
