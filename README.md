@@ -28,4 +28,6 @@ Following Speech Commands are available:
 
 To activate webradio in kitchen say e.g. "Alexa, schalte Radio Küche ein!"
 ### Smart Phone Interface
+![Webradio](/Images/WebradioScreenShot.png) 
+![Wateralarm](/Images/WateralarmScreenShot.png) 
 ### Remote Controller
