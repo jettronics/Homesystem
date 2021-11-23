@@ -15,3 +15,17 @@ Radio streaming can be controlled as mentioned above by different ways
 With the MPD (Music Player Daemon) player running on Central unit a list of radio streaming provides can be selected.  
 For further technical details see Wiki page.
 ## Operation
+The User can interact with the Homesystem over Alexa Speech Commands, Smart Phone Interface and Remote Controller.
+### Alexa Speech Commands
+Node RED uses amazon-echo-device-nodes to receive speech commands from Alexa. For Alexa those nodes are visible as a Light Bulb and can be speech controlled accordingly.
+Following Speech Commands are available:
+* Radio Küche
+* Radio Bad
+* Lieblingssender
+* Was anderes
+* Radio lauter
+* Radio leiser
+
+To activate webradio in kitchen say e.g. "Alexa, schalte Radio Küche ein!"
+### Smart Phone Interface
+### Remote Controller
