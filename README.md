@@ -39,3 +39,4 @@ The next tab shows the status of the different Watersensors.
   
 Green LED means no water detected. Red LED means water detected.
 ### Remote Controller
+### Water Detection
