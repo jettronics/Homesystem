@@ -39,4 +39,10 @@ The next tab shows the status of the different Watersensors.
   
 Green LED means no water detected. Red LED means water detected. In case of Water detection a Push message will be sent to Smart Phone.
 ### Remote Controller
+The Remote Controller is a small device to control Webradio by 4 buttons.
+* On/Off Webradio
+* Next Webradio station
+* Volume up
+* Volume down
+  
 ### Water Detection
