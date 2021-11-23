@@ -29,7 +29,7 @@ Following Speech Commands are available:
 To activate webradio in kitchen say e.g. "Alexa, schalte Radio Küche ein!"
 ### Smart Phone Interface
 There are two tabs as Interface to Homesystem.  
-The first one is to control Webradio with different stations
+The first one is to control Webradio with different stations.  
 ![Webradio](/Images/WebradioScreenShot.png)  
 The next tab shows the status of the different Watersensors.  
 ![Wateralarm](/Images/WateralarmScreenShot.png)  
