@@ -37,6 +37,6 @@ The next tab shows the status of the different Watersensors.
   
 ![Wateralarm](/Images/WateralarmScreenShot.png)  
   
-Green LED means no water detected. Red LED means water detected.
+Green LED means no water detected. Red LED means water detected. In case of Water detection a Push message will be sent to Smart Phone.
 ### Remote Controller
 ### Water Detection
