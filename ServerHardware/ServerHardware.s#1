@@ -7746,8 +7746,7 @@ Source: www.kingbright.com</description>
 <segment>
 <pinref part="RASPBERRY_PI" gate="G$1" pin="9"/>
 <pinref part="GND3" gate="1" pin="GND"/>
-<wire x1="2.54" y1="2.54" x2="2.54" y2="0" width="0.1524" layer="91"/>
-<wire x1="2.54" y1="0" x2="2.54" y2="-2.54" width="0.1524" layer="91"/>
+<wire x1="2.54" y1="2.54" x2="2.54" y2="-2.54" width="0.1524" layer="91"/>
 <wire x1="2.54" y1="-2.54" x2="-2.54" y2="-2.54" width="0.1524" layer="91"/>
 </segment>
 <segment>

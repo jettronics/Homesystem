@@ -7539,7 +7539,7 @@ Source: www.kingbright.com</description>
 <part name="GND11" library="supply1" deviceset="GND" device="" value="AGND"/>
 <part name="RASPBERRY_PI" library="con-harting" library_urn="urn:adsk.eagle:library:151" deviceset="CON40" device="" package3d_urn="urn:adsk.eagle:package:7123/1"/>
 <part name="HF_RECEIVER" library="con-amp-quick" library_urn="urn:adsk.eagle:library:125" deviceset="M08" device="" package3d_urn="urn:adsk.eagle:package:5962/1"/>
-<part name="AMPLIFIER_ENABLE" library="con-amp-quick" library_urn="urn:adsk.eagle:library:125" deviceset="M03" device="" package3d_urn="urn:adsk.eagle:package:5957/1"/>
+<part name="STDBY" library="con-amp-quick" library_urn="urn:adsk.eagle:library:125" deviceset="M03" device="" package3d_urn="urn:adsk.eagle:package:5957/1"/>
 <part name="R1" library="rcl" deviceset="R-EU_" device="0204/5" value="1.5k"/>
 <part name="GND1" library="supply1" deviceset="GND" device=""/>
 <part name="ANT1" library="discrete" library_urn="urn:adsk.eagle:library:211" deviceset="ANTENNA" device="" package3d_urn="urn:adsk.eagle:package:12928/1"/>
@@ -7622,11 +7622,11 @@ Source: www.kingbright.com</description>
 </instance>
 <instance part="HF_RECEIVER" gate="G$1" x="48.26" y="81.28" smashed="yes" rot="MR0">
 <attribute name="VALUE" x="53.34" y="68.58" size="1.778" layer="96" rot="MR0"/>
-<attribute name="NAME" x="58.42" y="66.802" size="1.778" layer="95" rot="MR0"/>
+<attribute name="NAME" x="60.96" y="97.282" size="1.778" layer="95" rot="MR0"/>
 </instance>
-<instance part="AMPLIFIER_ENABLE" gate="G$1" x="93.98" y="58.42" smashed="yes" rot="R180">
+<instance part="STDBY" gate="G$1" x="93.98" y="58.42" smashed="yes" rot="R180">
 <attribute name="VALUE" x="96.52" y="66.04" size="1.778" layer="96" rot="R180"/>
-<attribute name="NAME" x="109.22" y="52.578" size="1.778" layer="95" rot="R180"/>
+<attribute name="NAME" x="99.06" y="67.818" size="1.778" layer="95" rot="R180"/>
 </instance>
 <instance part="R1" gate="G$1" x="-25.4" y="66.04" smashed="yes" rot="R180">
 <attribute name="NAME" x="-21.59" y="64.5414" size="1.778" layer="95" rot="R180"/>
@@ -7871,7 +7871,7 @@ Source: www.kingbright.com</description>
 </segment>
 <segment>
 <pinref part="P+3" gate="1" pin="+5V"/>
-<pinref part="AMPLIFIER_ENABLE" gate="G$1" pin="1"/>
+<pinref part="STDBY" gate="G$1" pin="1"/>
 <wire x1="86.36" y1="68.58" x2="86.36" y2="60.96" width="0.1524" layer="91"/>
 </segment>
 <segment>
@@ -7913,7 +7913,7 @@ Source: www.kingbright.com</description>
 </net>
 <net name="N$13" class="0">
 <segment>
-<pinref part="AMPLIFIER_ENABLE" gate="G$1" pin="2"/>
+<pinref part="STDBY" gate="G$1" pin="2"/>
 <pinref part="T3" gate="G$1" pin="C"/>
 <wire x1="86.36" y1="58.42" x2="76.2" y2="58.42" width="0.1524" layer="91"/>
 <wire x1="76.2" y1="58.42" x2="76.2" y2="50.8" width="0.1524" layer="91"/>
@@ -7921,7 +7921,7 @@ Source: www.kingbright.com</description>
 </net>
 <net name="N$14" class="0">
 <segment>
-<pinref part="AMPLIFIER_ENABLE" gate="G$1" pin="3"/>
+<pinref part="STDBY" gate="G$1" pin="3"/>
 <wire x1="86.36" y1="55.88" x2="83.82" y2="55.88" width="0.1524" layer="91"/>
 <wire x1="83.82" y1="55.88" x2="83.82" y2="30.48" width="0.1524" layer="91"/>
 <pinref part="T1" gate="G$1" pin="C"/>
