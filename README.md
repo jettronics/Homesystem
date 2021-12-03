@@ -46,3 +46,6 @@ The Remote Controller is a small device to control Webradio by 4 buttons.
 * Volume down
   
 ### Water Detection
+This sensor device detects water and sends an appropiate signal to Homesystem centrals unit. 
+The Homesystem acts as a gateway and sends push messages on registered Smart phones in case of water detected. 
+The sensor draws very less standby current so that the battery can be used a very long time.
