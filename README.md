@@ -52,4 +52,4 @@ The sensor draws very less standby current so that the battery can be used a ver
 
 ## Improvements
 * HF Transmission for Remote Controller just Parity Bit checked. For more robust transmission a CRC check or similiar check can be used.
-* Loud speaker announcement for the Webradio channel when changing the Webradio channel e.g. over Speech commands
+* Loud speaker announcement for the Webradio channel when changing the Webradio channel over e.g. Speech commands
