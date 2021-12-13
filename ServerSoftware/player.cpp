@@ -123,8 +123,18 @@ void Player::playStream( int iNumber )
     cout << "\nStream: " << iNumber << endl;
     
     status.iStream = iNumber;
-    status.strStation = stations[iNumber];
+    status.strStation = stations[iNumber]; 
     strPlayerMessage = "mpc play " + to_string(iNumber);
+    system( strPlayerMessage.data() );
+}
+
+void Player::playStationName( int iNumber )
+{
+    string strPlayerMessage;
+    
+    cout << "\nStation Name: " << iNumber << endl;
+    
+    strPlayerMessage = "omxplayer --vol -1000 /home/pi/Programme/Homesystem/Audio/" + to_string(iNumber) + "_WebradioChannel.wav";
     system( strPlayerMessage.data() );
 }
 
@@ -186,6 +196,10 @@ void Player::playControl()
         status.byLoadPlayList = 1;
         stopPlaying();
     }
+    else
+    {
+        playStationName( status.iStream );
+    }
 }
 
 void PlayStationNo::command(int param)
@@ -197,6 +211,7 @@ void PlayStationNo::command(int param)
         loadPlaylist();
         status.byLoadPlayList = 0;
     }
+    playStationName(param);
     playStream(param);
     status.byPlay = 1;
     
@@ -223,7 +238,8 @@ void PlayStationNext::command(int param)
     if( status.iStream >= stations.size() )
     {
         status.iStream = 1;
-    }          
+    } 
+    playStationName(status.iStream);    
     playStream(status.iStream);
     status.byPlay = 1;
     
@@ -263,6 +279,7 @@ void PlayInRoom::command(int param)
             {
                 status.iStream = 1;
             }
+            playStationName(status.iStream);
             playStream(status.iStream);
             status.byPlay = 1;
         }
@@ -297,6 +314,7 @@ void PlayInRoomOn::command(int param)
             {
                 status.iStream = 1;
             }
+            playStationName(status.iStream);
             playStream(status.iStream);
             status.byPlay = 1;
         }

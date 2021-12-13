@@ -37,6 +37,7 @@ protected:
     void playStream( int iNumber );
     void stopPlaying();
     void playControl();
+    void playStationName( int iNumber );
 
 protected: //accessible from derived class
     static PlayerStatus status;

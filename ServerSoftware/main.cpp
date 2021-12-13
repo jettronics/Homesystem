@@ -135,6 +135,9 @@ int main(int argc, char *argv[])
         cout << "\nConsole Client\n"; 
         cout.flush();
         
+        cin.clear();
+        fflush(stdin);
+        
         while( 1 )
         {
             string key = "";
