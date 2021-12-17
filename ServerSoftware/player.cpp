@@ -134,6 +134,9 @@ void Player::playStationName( int iNumber )
     
     cout << "\nStation Name: " << iNumber << endl;
     
+    strPlayerMessage = "mpc stop";
+    system( strPlayerMessage.data() );
+    
     strPlayerMessage = "omxplayer --vol -1000 /home/pi/Programme/Homesystem/Audio/" + to_string(iNumber) + "_WebradioChannel.wav";
     system( strPlayerMessage.data() );
 }
@@ -199,6 +202,7 @@ void Player::playControl()
     else
     {
         playStationName( status.iStream );
+        playStream(status.iStream);
     }
 }
 
