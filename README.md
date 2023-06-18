@@ -6,13 +6,17 @@ Further more the Homesystem acts as an Alarm center to monitor different sensors
 
 ## Overview
 The Homesystem centeral unit is realized by a Raspberry PI 3B+ controller module. 
-The Sensor Alarm message connection is realized by a FM (433MHz) link between Sensor and Central unit.
-Radio streaming can be controlled as mentioned above by different ways
+
+![Overview](/Images/Overview.jpg)  
+
+Radio can be played by Loudspeakers installed in different rooms of the appartment. Controlling the radio streams can be happened by different ways
 * Alexa - The speech command for radio streaming is routed over Alexa to the Central unit. 
 * Smart Phone - A browser interface is provided by NodeRED
 * Remote Controller - A FM based controller to control the radio player on Central unit.
 
 With the MPD (Music Player Daemon) player running on Central unit a list of radio streaming provides can be selected.  
+Sensors detect water flowing accidentally on floor. Sensor Alarm messages are routed by a FM (433MHz) link between Sensor and Central unit.
+In case of water detection push messages will be sent which can be received and read on Smartphone.
 For further technical details see Wiki page.
 ## Operation
 The User can interact with the Homesystem over Alexa Speech Commands, Smart Phone Interface and Remote Controller.
