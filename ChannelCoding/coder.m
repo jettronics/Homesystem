@@ -1,13 +1,18 @@
 clear all;
 pkg load signal;
 
-format( 'short' );
+%format( 'short' );
 
 i_x = [0b000100, 0b000101]; 
 
-a = bitshift(i_x(1), 6);
+%a = bitshift(i_x(1), 6);
+%disp( a );
 
-disp( a );
+gen = 0b1101111;
+genlen = 7;
+infolen = 12;
+
+%bitxor
 
 %{
 void modulo2div(char data[], char key[], int datalen, int keylen)
