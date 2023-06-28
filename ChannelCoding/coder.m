@@ -1,11 +1,26 @@
 clear all;
 pkg load signal;
 
-format( 'short' );
+%format( 'short' );
+m = 12;
+n = 6;
+g_x = 0b1101111;
 
-i_x = [0b000100, 0b000101]; 
+i_x = [0b000100, 0b000101];
 
-a = bitshift(i_x(1), 6);
+is_x = bitshift(i_x(1), 6);
+
+startbit = m;
+restbits = 0; %Number 0 bits for the division
+for i=m:n
+  if bitget(is_x, i) == 1
+    startbit = i;
+    restbits = i-n;
+  endif
+end
+
+%xor
+
 
 disp( a );
 
@@ -16,7 +31,7 @@ void modulo2div(char data[], char key[], int datalen, int keylen)
 char temp[20],rem[20];
 
 for(int i=0;i<keylen;i++)
-rem[i]=data[i];                    //considering keylen-1 bits of data for each step of binary division/EXOR 
+rem[i]=data[i];                    //considering keylen-1 bits of data for each step of binary division/EXOR
 
 for(int j=keylen;j<=datalen;j++)
 {
@@ -29,15 +44,15 @@ for(int j=keylen;j<=datalen;j++)
             rem[i]=temp[i+1];
     }
     else                    //else exor the divident with generator polynomial
-    {    
+    {
         for(int i=0;i<keylen-1;i++)
             rem[i]=exor(temp[i+1],key[i+1]);
-            
+
     }
         rem[keylen-1]=data[j];        //appending next bit of data to remainder obtain by division
-    
+
 }
-    
+
 cout<<"CRC="<<rem<<"\nDataword="<<data;        //remainder obtain is crc
 }
 %}
