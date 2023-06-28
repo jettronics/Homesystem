@@ -2,24 +2,54 @@ clear all;
 pkg load signal;
 
 %format( 'short' );
+
 m = 12;
 n = 6;
 g_x = 0b1101111;
 
-i_x = [0b000100, 0b000101];
+i_x = [0, 0, 0, 0;
+       0b000100, 0b000101, 0b000110, 0b000111; 
+       0b001000, 0b001001, 0b001010, 0b001011;
+       0b001100, 0b001101, 0b001110, 0b001111;
+       0, 0, 0, 0;
+       0, 0, 0, 0;
+       0, 0, 0, 0;
+       0, 0, 0, 0;
+       0, 0, 0, 0;
+       0, 0, 0, 0;
+       0, 0, 0, 0;
+       0b101100, 0b101101, 0b101110, 0b101111;
+       0b110000, 0b110001, 0b110010, 0b110011;
+       ];
 
-is_x = bitshift(i_x(1), 6);
+d_x = zeros(13,4);
 
-startbit = m;
-restbits = 0; %Number 0 bits for the division
-for i=m:n
-  if bitget(is_x, i) == 1
-    startbit = i;
-    restbits = i-n;
-  endif
+for a=1:1:13
+  for b=1:1:4
+    if i_x(a,b) != 0
+      i1_x = bitshift(i_x(a,b), 6);
+      startbit = m;
+    restbits = 0; %Number 0 bits for the division
+    for i=m:-1:n
+      if bitget(i1_x, i) == 1
+        startbit = i;
+        restbits = i-n-1;
+        break
+      endif
+    end
+
+    i2_x = bitshift(i1_x, -restbits);
+    i3_x = bitxor(i2_x, g_x);
+
+    for i=restbits:-1:1
+      i4_x = bitshift(i3_x, 1);
+      i5_x = bitxor(i4_x, g_x);
+      i3_x = i5_x;
+    end
+    d_x(a,b) = i3_x;
+  end
 end
 
-%xor
 
 %{
 void modulo2div(char data[], char key[], int datalen, int keylen)
