@@ -21,9 +21,6 @@ end
 
 %xor
 
-
-disp( a );
-
 %{
 void modulo2div(char data[], char key[], int datalen, int keylen)
 {
