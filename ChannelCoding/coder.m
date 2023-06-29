@@ -29,24 +29,25 @@ for a=1:1:13
     if i_x(a,b) != 0
       i1_x = bitshift(i_x(a,b), 6);
       startbit = m;
-    restbits = 0; %Number 0 bits for the division
-    for i=m:-1:n
-      if bitget(i1_x, i) == 1
-        startbit = i;
-        restbits = i-n-1;
-        break
-      endif
-    end
+      restbits = 0; %Number 0 bits for the division
+      for i=m:-1:n
+        if bitget(i1_x, i) == 1
+          startbit = i;
+          restbits = i-n-1;
+          break
+        endif
+      end
 
-    i2_x = bitshift(i1_x, -restbits);
-    i3_x = bitxor(i2_x, g_x);
+      i2_x = bitshift(i1_x, -restbits);
+      i3_x = bitxor(i2_x, g_x);
 
-    for i=restbits:-1:1
-      i4_x = bitshift(i3_x, 1);
-      i5_x = bitxor(i4_x, g_x);
-      i3_x = i5_x;
+      for i=restbits:-1:1
+        i4_x = bitshift(i3_x, 1);
+        i5_x = bitxor(i4_x, g_x);
+        i3_x = i5_x;
+      end
+      d_x(a,b) = i3_x;
     end
-    d_x(a,b) = i3_x;
   end
 end
 
