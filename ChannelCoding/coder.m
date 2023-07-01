@@ -8,7 +8,7 @@ n = 6;
 g_x = 0b1101111;
 
 i_x = [0, 0, 0, 0;
-       0b000100, 0b000101, 0b000110, 0b000111; 
+       0b000100, 0b000101, 0b000110, 0b000111;
        0b001000, 0b001001, 0b001010, 0b001011;
        0b001100, 0b001101, 0b001110, 0b001111;
        0, 0, 0, 0;
@@ -29,70 +29,69 @@ s_x = zeros(13,4);
 for a=1:1:13
   for b=1:1:4
     if i_x(a,b) != 0
-      i1_x = bitshift(i_x(a,b), 6);
-      startbit = m;
+      i1_x = bitshift(uint16(i_x(a,b)), 6);
+      %startbit = m;
       restbits = 0; %Number 0 bits for the division
       for i=m:-1:n
-        if bitget(i1_x, i) == 1
-          startbit = i;
+        if bitget(uint16(i1_x), i) == 1
+          %startbit = i;
           restbits = i-n-1;
-          break
+          if restbits < 0
+            break;
+          endif
+          gs_x = bitshift(uint16(g_x), restbits);
+          i3_x = bitxor(uint16(i1_x), uint16(gs_x));
+          i1_x = i3_x;
         endif
       end
-
-      i2_x = bitshift(i1_x, -restbits);
-      i3_x = bitxor(i2_x, g_x);
-
-      for i=restbits:-1:1
-        i4_x = bitshift(i3_x, 1);
-        i5_x = bitxor(i4_x, g_x);
-        i3_x = i5_x;
-      end
-      d_x(a,b) = i3_x;
-      c_x(a,b) = bitshift(i_x(a,b),n) + d_x(a,b);
+      d_x(a,b) = i1_x;
+      c_x(a,b) = bitshift(uint16(i_x(a,b)),n) + d_x(a,b);
     end
   end
 end
 
-G_nsys = [ 0b110111100000;      
-           0b011011110000;      
-           0b001101111000;      
-           0b000110111100;      
-           0b000011011110;      
-           0b000001101111; ];   
-                                
+G_nsys = [ 0b110111100000;
+           0b011011110000;
+           0b001101111000;
+           0b000110111100;
+           0b000011011110;
+           0b000001101111; ];
+
 G_ksys = [ 0b100000000111;
            0b010000110100;
            0b001000011010;
            0b000100001101;
            0b000010110001;
            0b000001101111; ];
-           
-H = [ 0b010011100000; 
-      0b011010010000; 
+
+H = [ 0b010011100000;
+      0b011010010000;
       0b001101001000;
-      0b110101000100;  
-      0b101001000010; 
+      0b110101000100;
+      0b101001000010;
       0b100111000001; ];
-      
+
 %     0b001001110101
-      
-check = c_x(3,2);
-      
-for k=1:1:n
-  test = bitand(c_x(3,2),H(k));
-  cntbit = 0;
-  for i=1:1:m
-    bg = bitget(test, i);
-    if bg == 1
-      cntbit++; 
-    endif
+
+check = d_x(2,4);
+
+for a=1:1:13
+  for b=1:1:4
+    for k=1:1:n
+      test = bitand(uint16(c_x(a,b)),uint16(H(k)));
+      cntbit = 0;
+      for i=1:1:m
+        bg = bitget(uint16(test), i);
+        if bg == 1
+          cntbit++;
+        endif
+      end
+      if bitget(uint16(cntbit), 1) == 1
+        s_x(a,b) = bitset(uint16(0),k);
+      endif
+    end
   end
-  if bitget(cntbit, 1) == 1
-    s_x(3,2) = bitset(0,k);
-  endif
 end
-      
 %{
 void modulo2div(char data[], char key[], int datalen, int keylen)
 {
