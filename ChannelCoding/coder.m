@@ -1,7 +1,4 @@
 clear all;
-pkg load signal;
-
-%format( 'short' );
 
 m = 12;
 n = 6;
@@ -24,6 +21,7 @@ i_x = [0, 0, 0, 0;
 
 d_x = zeros(13,4);
 c_x = zeros(13,4);
+r_x = zeros(13,4);
 s_x = zeros(13,4);
 
 for a=1:1:13
@@ -70,15 +68,27 @@ H = [ 0b010011100000;
       0b110101000100;
       0b101001000010;
       0b100111000001; ];
+      
+r_x = c_x;
 
-%     0b001001110101
+for a=1:1:13
+  for b=1:1:4
+    if r_x(a,b) != 0
+      ri = randi(12, 1, 1);
+      if bitget(uint16(r_x(a,b)), ri) == 1
+        r_x(a,b) = bitset(uint16(r_x(a,b)),ri,0);
+      else
+        r_x(a,b) = bitset(uint16(r_x(a,b)),ri,1);
+      endif
+    endif
+  end
+end
 
-check = d_x(2,4);
 
 for a=1:1:13
   for b=1:1:4
     for k=1:1:n
-      test = bitand(uint16(c_x(a,b)),uint16(H(k)));
+      test = bitand(uint16(r_x(a,b)),uint16(H(k)));
       cntbit = 0;
       for i=1:1:m
         bg = bitget(uint16(test), i);
@@ -92,38 +102,6 @@ for a=1:1:13
     end
   end
 end
-%{
-void modulo2div(char data[], char key[], int datalen, int keylen)
-{
-
-char temp[20],rem[20];
-
-for(int i=0;i<keylen;i++)
-rem[i]=data[i];                    //considering keylen-1 bits of data for each step of binary division/EXOR
-
-for(int j=keylen;j<=datalen;j++)
-{
-    for(int i=0;i<keylen;i++)
-    temp[i]=rem[i];                // remainder of previous step is divident of current step
-
-    if(rem[0]=='0')                //if 1's bit of remainder is 0 then shift the rem by 1 bit
-    {
-        for(int i=0;i<keylen-1;i++)
-            rem[i]=temp[i+1];
-    }
-    else                    //else exor the divident with generator polynomial
-    {
-        for(int i=0;i<keylen-1;i++)
-            rem[i]=exor(temp[i+1],key[i+1]);
-
-    }
-        rem[keylen-1]=data[j];        //appending next bit of data to remainder obtain by division
-
-}
-
-cout<<"CRC="<<rem<<"\nDataword="<<data;        //remainder obtain is crc
-}
-%}
 
 %figure(1)
 %subplot(1,1,1)
