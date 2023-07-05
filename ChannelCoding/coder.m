@@ -74,16 +74,17 @@ r_x = c_x;
 for a=1:1:13
   for b=1:1:4
     if r_x(a,b) != 0
-      ri = randi(12, 1, 1);
-      if bitget(uint16(r_x(a,b)), ri) == 1
-        r_x(a,b) = bitset(uint16(r_x(a,b)),ri,0);
-      else
-        r_x(a,b) = bitset(uint16(r_x(a,b)),ri,1);
-      endif
+      for c=1:1:3 % 3 bit error
+        ri = randi(12, 1, 1);
+        if bitget(uint16(r_x(a,b)), ri) == 1
+          r_x(a,b) = bitset(uint16(r_x(a,b)),ri,0);
+        else
+          r_x(a,b) = bitset(uint16(r_x(a,b)),ri,1);
+        endif
+      end
     endif
   end
 end
-
 
 for a=1:1:13
   for b=1:1:4
