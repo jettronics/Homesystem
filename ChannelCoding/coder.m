@@ -23,6 +23,7 @@ d_x = zeros(13,4);
 c_x = zeros(13,4);
 r_x = zeros(13,4);
 s_x = zeros(13,4);
+crc_check = zeros(13,4);
 
 for a=1:1:13
   for b=1:1:4
@@ -71,6 +72,7 @@ H = [ 0b010011100000;
       
 r_x = c_x;
 
+
 for a=1:1:13
   for b=1:1:4
     if r_x(a,b) != 0
@@ -86,6 +88,7 @@ for a=1:1:13
   end
 end
 
+% Syndrom decoding
 for a=1:1:13
   for b=1:1:4
     for k=1:1:n
@@ -103,6 +106,16 @@ for a=1:1:13
     end
   end
 end
+
+%CRC compare check
+for a=1:1:13
+  for b=1:1:4
+    if c_x(a,b) != r_x(a,b)
+      crc_check(a,b) = 1;
+    endif
+  end
+end
+
 
 %figure(1)
 %subplot(1,1,1)

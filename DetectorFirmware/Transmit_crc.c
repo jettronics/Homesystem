@@ -1,7 +1,6 @@
 
 
 #include <avr/interrupt.h>
-#include <util/parity.h>
 
 #include "Types.h"
 
@@ -9,11 +8,22 @@
 #include "Control.h"
 #include "Transmit.h"
 
-
 typedef enum
 {
    SEND_IDLE = 0,
    SEND_START,
+   SEND_BIT_11_1,
+   SEND_BIT_11_0,
+   SEND_BIT_10_1,
+   SEND_BIT_10_0,
+   SEND_BIT_9_1,
+   SEND_BIT_9_0,
+   SEND_BIT_8_1,
+   SEND_BIT_8_0,
+   SEND_BIT_7_1,
+   SEND_BIT_7_0,
+   SEND_BIT_6_1,
+   SEND_BIT_6_0,
    SEND_BIT_5_1,
    SEND_BIT_5_0,
    SEND_BIT_4_1,
@@ -26,8 +36,6 @@ typedef enum
    SEND_BIT_1_0,
    SEND_BIT_0_1,
    SEND_BIT_0_0,
-   SEND_PARITY_BIT_1,
-   SEND_PARITY_BIT_0,
    SEND_STOP
 }
 transmit_type;
@@ -42,12 +50,28 @@ static void StopTransmit( void );
 transmit_type bSendState;
 byte bHFPin;
 byte bBitCnt;
-byte bParity;
-byte bBitSample;
-byte bTransmitData;
-byte bSendData;
+unsigned int uiBitSample;
+unsigned int uiTransmitData;
+unsigned int uiSendData;
 byte bNewRequest;
 
+
+const unsigned int uiCrcCode[][] =
+{
+   {0, 0, 0, 0},
+   {269, 354, 444, 467},
+   {538, 629, 683, 708},
+   {791, 888, 934, 969},
+   {0, 0, 0, 0},
+   {0, 0, 0, 0},
+   {0, 0, 0, 0},
+   {0, 0, 0, 0},
+   {0, 0, 0, 0},
+   {0, 0, 0, 0},
+   {0, 0, 0, 0},
+   {2832, 2943, 2977, 3022},
+   {3123, 3164, 3202, 3309}
+};
 
 
 
@@ -57,10 +81,9 @@ void Transmit_Init(void)
   ResetHFPin();
   bSendState = SEND_IDLE;
   bBitCnt = 0;
-  bParity = 0;
-  bBitSample = 0;
-  bTransmitData = 0;
-  bSendData = 0;
+  uiBitSample = 0;
+  uiTransmitData = 0;
+  uiSendData = 0;
   bNewRequest = 0;
 
   /* after every match reset timer counter to 0, */
@@ -73,8 +96,11 @@ void Transmit_Init(void)
 
 void Transmit_Send( byte bSend )
 {
-   bSendData = bSend;
-   bNewRequest = 1;
+   uiSendData = uiCrcCode[DEVICE][(bSend & 0x03)];
+   if( uiSendData != 0 )
+   {
+      bNewRequest = 1;
+   }
 }
 
 void Transmit_Process( void )
@@ -82,11 +108,10 @@ void Transmit_Process( void )
    if( (bSendState == SEND_IDLE) && (bNewRequest == 1) )
    {
       bNewRequest = 0;
-      bTransmitData = bSendData;
+      uiTransmitData = uiSendData;
       bSendState = SEND_START;
       bBitCnt = 5;
-      bBitSample = 0x20;
-      bParity = parity_even_bit( bTransmitData );
+      uiBitSample = 0x800;
       StartTransmit();
    }
 }
@@ -148,24 +173,37 @@ ISR( TIMER1_OVF1_vect )
         if( bBitCnt == 0 )
         {
            ResetHFPin();
-           bSendState = SEND_BIT_5_1;
+           bSendState = SEND_BIT_11_1;
+           bBitCnt = 6;
         }
      break;
 
+     case SEND_BIT_11_1:
+     case SEND_BIT_10_1:
+     case SEND_BIT_9_1:
+     case SEND_BIT_8_1:
+     case SEND_BIT_7_1:
+     case SEND_BIT_6_1:
      case SEND_BIT_5_1:
      case SEND_BIT_4_1:
      case SEND_BIT_3_1:
      case SEND_BIT_2_1:
      case SEND_BIT_1_1:
      case SEND_BIT_0_1:
-        if( bTransmitData & bBitSample )
+        if( bTransmitData & uiBitSample )
         {
            ToggleHFPin();
         }
-        bBitSample >>= 1;
+        uiBitSample >>= 1;
         bSendState++;
      break;
 
+     case SEND_BIT_11_0:
+     case SEND_BIT_10_0:
+     case SEND_BIT_9_0:
+     case SEND_BIT_8_0:
+     case SEND_BIT_7_0:
+     case SEND_BIT_6_0:
      case SEND_BIT_5_0:
      case SEND_BIT_4_0:
      case SEND_BIT_3_0:
@@ -174,19 +212,6 @@ ISR( TIMER1_OVF1_vect )
      case SEND_BIT_0_0:
         ToggleHFPin();
         bSendState++;
-     break;
-
-     case SEND_PARITY_BIT_1:
-        if( bParity )
-        {
-           ToggleHFPin();
-        }
-        bSendState = SEND_PARITY_BIT_0;
-     break;
-     case SEND_PARITY_BIT_0:
-        ToggleHFPin();
-        bSendState = SEND_STOP;
-        bBitCnt = 6;
      break;
 
      case SEND_STOP:

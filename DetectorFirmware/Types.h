@@ -57,27 +57,4 @@ typedef enum
 }
 ct_batt_type;
 
-typedef enum
-{
-   SEND_IDLE = 0,
-   SEND_START,
-   SEND_BIT_5_1,
-   SEND_BIT_5_0,
-   SEND_BIT_4_1,
-   SEND_BIT_4_0,
-   SEND_BIT_3_1,
-   SEND_BIT_3_0,
-   SEND_BIT_2_1,
-   SEND_BIT_2_0,
-   SEND_BIT_1_1,
-   SEND_BIT_1_0,
-   SEND_BIT_0_1,
-   SEND_BIT_0_0,
-   SEND_PARITY_BIT_1,
-   SEND_PARITY_BIT_0,
-   SEND_STOP
-}
-transmit_type;
-
-
 #endif
