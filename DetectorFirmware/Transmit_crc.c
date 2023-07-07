@@ -55,13 +55,12 @@ unsigned int uiTransmitData;
 unsigned int uiSendData;
 byte bNewRequest;
 
-
-const unsigned int uiCrcCode[][] =
+const unsigned int uiCrcCode[][4] =
 {
    {0, 0, 0, 0},
    {269, 354, 444, 467},
    {538, 629, 683, 708},
-   {791, 888, 934, 969},
+   {791, 888, 934, 969} /*,
    {0, 0, 0, 0},
    {0, 0, 0, 0},
    {0, 0, 0, 0},
@@ -70,9 +69,8 @@ const unsigned int uiCrcCode[][] =
    {0, 0, 0, 0},
    {0, 0, 0, 0},
    {2832, 2943, 2977, 3022},
-   {3123, 3164, 3202, 3309}
+   {3123, 3164, 3202, 3309} */
 };
-
 
 
 void Transmit_Init(void)
@@ -96,7 +94,7 @@ void Transmit_Init(void)
 
 void Transmit_Send( byte bSend )
 {
-   uiSendData = uiCrcCode[DEVICE][(bSend & 0x03)];
+   uiSendData = uiCrcCode[DEVICE()][(bSend & 0x03)];
    if( uiSendData != 0 )
    {
       bNewRequest = 1;
@@ -190,7 +188,7 @@ ISR( TIMER1_OVF1_vect )
      case SEND_BIT_2_1:
      case SEND_BIT_1_1:
      case SEND_BIT_0_1:
-        if( bTransmitData & uiBitSample )
+        if( uiTransmitData & uiBitSample )
         {
            ToggleHFPin();
         }
