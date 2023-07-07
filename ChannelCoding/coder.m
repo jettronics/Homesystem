@@ -23,7 +23,6 @@ d_x = zeros(13,4);
 c_x = zeros(13,4);
 r_x = zeros(13,4);
 s_x = zeros(13,4);
-crc_check = zeros(13,4);
 
 for a=1:1:13
   for b=1:1:4
@@ -104,15 +103,6 @@ for a=1:1:13
         s_x(a,b) = bitset(uint16(0),k);
       endif
     end
-  end
-end
-
-%CRC compare check
-for a=1:1:13
-  for b=1:1:4
-    if c_x(a,b) != r_x(a,b)
-      crc_check(a,b) = 1;
-    endif
   end
 end
 

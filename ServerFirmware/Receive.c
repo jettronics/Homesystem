@@ -38,22 +38,32 @@
 #define TIME_HIGH_BIT_L_MAX   10 // digit = 160탎 / (16탎 / digit) = 10
 #define TIME_HIGH_BIT_L_MIN    7 // digit = 120탎 / (16탎 / digit) = 7
 
-#define DEBOUNCE_THRESHOLD     3
+//#define DEBOUNCE_THRESHOLD     3
 
 void(*regFctClbk)(byte);
-static void DebounceData( byte byRec );
+//static void DebounceData( byte byRec );
+static byte SyndromDecoding( unsigned int uiRec );
 
 static byte byTimestampOld = 0;
 static byte byTimestampNew = 0;
 //static byte byLevel = 0;
 static byte byCaptureTime = 0;
 static byte bySync = 0;
-static byte byBitIndex = 0x40;
+static unsigned int uiBitIndex = 0x0800;
 static byte byHighBitRecognition = 0;
-static byte byReceive = 0;
-static byte byParity = 0;
-static byte byReceivedData = 0;
+static unsigned int uiReceive = 0;
+static unsigned int uiReceivedData = 0;
 static byte byDataAvailable = 0;
+
+const unsigned int uiCheckMatrix[] =
+{
+   0x04e0, /*0b 0100 1110 0000*/
+   0x0690, /*0b 0110 1001 0000*/
+   0x0348, /*0b 0011 0100 1000*/
+   0x0d44, /*0b 1101 0100 0100*/
+   0x0a42, /*0b 1010 0100 0010*/
+   0x09c1  /*0b 1001 1100 0001*/
+};
 
 
 void Receive_Init( void )
@@ -82,20 +92,63 @@ void Receive_Process( void )
 {
    if( byDataAvailable )
    {
-      byte byRecVal;
+      static unsigned int uiRecVal = 0;
+      static byte byRecOk = 0;
+      static byte byRec = 0;
 
       cli();
       byDataAvailable = 0;
-      byRecVal = byReceivedData;
+      uiRecVal = uiReceivedData;
       sei();
 
-      DebounceData(byRecVal);
+      //DebounceData(byRecVal);
+      byRecOk = SyndromDecoding(uiRecVal);
+
+      if( byRecOk != 0 )
+      {
+         byRec = (uiRecVal >> 6) & 0x3F;
+    	 if( regFctClbk != 0 )
+	     {
+		    regFctClbk( byRec );
+	     }
+      }
+
    }
 
    return;
 }
 
+static byte SyndromDecoding( unsigned int uiRec )
+{
+   static unsigned int uiTest = 0;
+   static byte byCntBit = 0;
+   static unsigned int uiBitCheck = 0;
+   byte byRet = 1;
 
+   for( byte byIndex1 = 0; byIndex1 < 6; byIndex1++ )
+   {
+	   uiTest = uiRec & uiCheckMatrix[byIndex1];
+	   byCntBit = 0;
+	   uiBitCheck = 1;
+	   for( byte byIndex2 = 0; byIndex2 < 12; byIndex2++ )
+	   {
+		   if( (uiTest & uiBitCheck) != 0 )
+		   {
+		      byCntBit++;
+		   }
+		   uiBitCheck <<= 1;
+	   }
+	   if( (byCntBit & 0x01) == 0x01 )
+	   {
+	      byRet = 0;
+	      break;
+	   }
+   }
+
+   return byRet;
+}
+
+/*
 static void DebounceData( byte byRec )
 {
    static byte byDebounceVal = 0;
@@ -120,6 +173,7 @@ static void DebounceData( byte byRec )
    }
 
 }
+*/
 
 ISR( ANA_COMP_vect )
 {
@@ -159,10 +213,9 @@ ISR( ANA_COMP_vect )
    {
       /* valid Sync */
       bySync = 1;
-      byBitIndex = 0x40;
+      uiBitIndex = 0x0800;
       byHighBitRecognition = 0;
-      byParity = 0;
-      byReceive = 0;
+      uiReceive = 0;
    }
    else
    /*if( ((byLevel == 1) &&
@@ -178,16 +231,15 @@ ISR( ANA_COMP_vect )
       /* valid Low Bit */
       if( (bySync == 1) && (byHighBitRecognition == 0) )
       {
-         byReceive &= ((~byBitIndex) & 0x7F);
-         byBitIndex >>= 1;
+         uiReceive &= ((~uiBitIndex) & 0x0FFF);
+         uiBitIndex >>= 1;
          byHighBitRecognition = 0;
       }
       else
       {
-         byBitIndex = 0x40;
+         uiBitIndex = 0x0800;
          bySync = 0;
-         byParity = 0;
-         byReceive = 0;
+         uiReceive = 0;
          return;
       }
 
@@ -211,20 +263,15 @@ ISR( ANA_COMP_vect )
          if( byHighBitRecognition >= 2 )
          {
             byHighBitRecognition = 0;
-            byReceive |= (byBitIndex & 0x7F);
-            if( byBitIndex != 0x01 )
-            {
-                byParity ^= 1;
-            }
-            byBitIndex >>= 1;
+            uiReceive |= (uiBitIndex & 0x0FFF);
+            uiBitIndex >>= 1;
          }
       }
       else
       {
-         byBitIndex = 0x40;
+         uiBitIndex = 0x0800;
          bySync = 0;
-         byParity = 0;
-         byReceive = 0;
+         uiReceive = 0;
          return;
       }
    }
@@ -232,31 +279,20 @@ ISR( ANA_COMP_vect )
    {
       /* no valid sample */
       bySync = 0;
-      byBitIndex = 0x40;
+      uiBitIndex = 0x0800;
       byHighBitRecognition = 0;
-      byParity = 0;
-      byReceive = 0;
+      uiReceive = 0;
       return;
    }
 
-   /* 0  0000  00  0
-          dev|batt|P */
-   if( byBitIndex == 0x00 )
+   if( uiBitIndex == 0x0000 )
    {
       /* Transmission finished */
       bySync = 0;
-      byBitIndex = 0x40;
+      uiBitIndex = 0x0800;
 
-      if( byParity == (byReceive & 0x01) )
-      {
-         if( byReceive > 0 )
-         {
-            byReceivedData = (byReceive >> 1) & 0x3F;
-            byDataAvailable = 1;
-         }
-      }
-      byParity = 0;
-      byReceive = 0;
+      uiReceivedData = uiReceive & 0x0FFF;
+      uiReceive = 0;
    }
    
    return;
