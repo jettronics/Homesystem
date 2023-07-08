@@ -96,10 +96,14 @@ void Receive_Process( void )
       static byte byRecOk = 0;
       static byte byRec = 0;
 
+      TP2_ON();
+
       cli();
       byDataAvailable = 0;
       uiRecVal = uiReceivedData;
       sei();
+
+      TP2_OFF();
 
       //DebounceData(byRecVal);
       byRecOk = SyndromDecoding(uiRecVal);
@@ -107,11 +111,13 @@ void Receive_Process( void )
       if( byRecOk != 0 )
       {
          byRec = (uiRecVal >> 6) & 0x3F;
-    	 if( regFctClbk != 0 )
-	     {
-		    regFctClbk( byRec );
-	     }
+    	   if( regFctClbk != 0 )
+	      {
+		      regFctClbk( byRec );
+	      }
       }
+
+      TP2_OFF();
 
    }
 
@@ -127,7 +133,7 @@ static byte SyndromDecoding( unsigned int uiRec )
 
    for( byte byIndex1 = 0; byIndex1 < 6; byIndex1++ )
    {
-	   uiTest = uiRec & uiCheckMatrix[byIndex1];
+      uiTest = uiRec & uiCheckMatrix[byIndex1];
 	   byCntBit = 0;
 	   uiBitCheck = 1;
 	   for( byte byIndex2 = 0; byIndex2 < 12; byIndex2++ )
@@ -140,7 +146,8 @@ static byte SyndromDecoding( unsigned int uiRec )
 	   }
 	   if( (byCntBit & 0x01) == 0x01 )
 	   {
-	      byRet = 0;
+	      TP2_ON();
+         byRet = 0;
 	      break;
 	   }
    }
@@ -212,10 +219,12 @@ ISR( ANA_COMP_vect )
        (byCaptureTime > TIME_SYNC_MIN) )
    {
       /* valid Sync */
+      TP1_ON();
       bySync = 1;
       uiBitIndex = 0x0800;
       byHighBitRecognition = 0;
       uiReceive = 0;
+      TP1_OFF();
    }
    else
    /*if( ((byLevel == 1) &&
@@ -231,9 +240,11 @@ ISR( ANA_COMP_vect )
       /* valid Low Bit */
       if( (bySync == 1) && (byHighBitRecognition == 0) )
       {
+         TP1_ON();
          uiReceive &= ((~uiBitIndex) & 0x0FFF);
          uiBitIndex >>= 1;
          byHighBitRecognition = 0;
+         TP1_OFF();
       }
       else
       {
@@ -258,6 +269,7 @@ ISR( ANA_COMP_vect )
       /* valid High Bit */
       if( bySync == 1 )
       {
+         TP1_ON();
          byHighBitRecognition++;
          /* one 0 to 1 transition for High Bit is necessary */
          if( byHighBitRecognition >= 2 )
@@ -266,6 +278,7 @@ ISR( ANA_COMP_vect )
             uiReceive |= (uiBitIndex & 0x0FFF);
             uiBitIndex >>= 1;
          }
+         TP1_OFF();
       }
       else
       {
@@ -292,6 +305,7 @@ ISR( ANA_COMP_vect )
       uiBitIndex = 0x0800;
 
       uiReceivedData = uiReceive & 0x0FFF;
+      byDataAvailable = 1;
       uiReceive = 0;
    }
    
