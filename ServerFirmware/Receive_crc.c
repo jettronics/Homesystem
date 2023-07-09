@@ -42,7 +42,8 @@
 
 void(*regFctClbk)(byte);
 //static void DebounceData( byte byRec );
-static byte SyndromDecoding( unsigned int uiRec );
+//static byte SyndromDecoding( unsigned int uiRec );
+static byte CheckPolynom( unsigned int uiRec );
 
 static byte byTimestampOld = 0;
 static byte byTimestampNew = 0;
@@ -55,14 +56,36 @@ static unsigned int uiReceive = 0;
 static unsigned int uiReceivedData = 0;
 static byte byDataAvailable = 0;
 
-const unsigned int uiCheckMatrix[] =
+
+//const unsigned int uiCheckMatrix[] =
+//{
+//   0x04e0, /*0b 0100 1110 0000*/
+//   0x0690, /*0b 0110 1001 0000*/
+//   0x0348, /*0b 0011 0100 1000*/
+//   0x0d44, /*0b 1101 0100 0100*/
+//   0x0a42, /*0b 1010 0100 0010*/
+//   0x09c1  /*0b 1001 1100 0001*/
+//};
+
+
+const byte byCheckPolynomMatrix[16][4] =
 {
-   0x04e0, /*0b 0100 1110 0000*/
-   0x0690, /*0b 0110 1001 0000*/
-   0x0348, /*0b 0011 0100 1000*/
-   0x0d44, /*0b 1101 0100 0100*/
-   0x0a42, /*0b 1010 0100 0010*/
-   0x09c1  /*0b 1001 1100 0001*/
+  {0,	0,	0,	0,},
+  {13, 34, 60, 19},
+  {26, 53, 43, 4},
+  {23, 56, 38,	9},
+  {0, 0, 0,	0},
+  {0, 0,	0,	0},
+  {0, 0,	0,	0},
+  {0, 0,	0, 0},
+  {0, 0,	0,	0},
+  {0, 0,	0, 0},
+  {0, 0,	0, 0},
+  {16, 63, 33, 14},
+  {51, 28, 2, 45},
+  {0, 0,	0, 0},
+  {0, 0,	0, 0},
+  {0, 0,	0, 0}
 };
 
 
@@ -96,20 +119,20 @@ void Receive_Process( void )
       static byte byRecOk = 0;
       static byte byRec = 0;
 
-      TP2_ON();
+      TP1_ON();
 
       cli();
       byDataAvailable = 0;
       uiRecVal = uiReceivedData;
       sei();
 
-      TP2_OFF();
-
       //DebounceData(byRecVal);
-      byRecOk = SyndromDecoding(uiRecVal);
+      //byRecOk = SyndromDecoding(uiRecVal);
+      byRecOk = CheckPolynom(uiRecVal);
 
       if( byRecOk != 0 )
       {
+         TP2_ON();
          byRec = (uiRecVal >> 6) & 0x3F;
     	   if( regFctClbk != 0 )
 	      {
@@ -117,6 +140,7 @@ void Receive_Process( void )
 	      }
       }
 
+      TP1_OFF();
       TP2_OFF();
 
    }
@@ -124,6 +148,30 @@ void Receive_Process( void )
    return;
 }
 
+static byte CheckPolynom( unsigned int uiRec )
+{
+   static byte byRow = 0;
+   static byte byCol = 0;
+   static byte byCheck = 0;
+   byte byRet = 1;
+   
+   byRow = (byte)((uiRec >> 8) & 0x000F);
+   byCol = (byte)((uiRec >> 6) & 0x0003);
+   byCheck = (byte)(uiRec & 0x003F);
+
+   if( byCheckPolynomMatrix[byRow][byCol] == 0 )
+   {
+      byRet = 0;
+   }   
+   else
+   if( byCheckPolynomMatrix[byRow][byCol] != byCheck )
+   {
+      byRet = 0;
+   }
+   
+   return byRet;
+}
+/*
 static byte SyndromDecoding( unsigned int uiRec )
 {
    static unsigned int uiTest = 0;
@@ -146,7 +194,6 @@ static byte SyndromDecoding( unsigned int uiRec )
 	   }
 	   if( (byCntBit & 0x01) == 0x01 )
 	   {
-	      TP2_ON();
          byRet = 0;
 	      break;
 	   }
@@ -154,6 +201,7 @@ static byte SyndromDecoding( unsigned int uiRec )
 
    return byRet;
 }
+*/
 
 /*
 static void DebounceData( byte byRec )
@@ -219,12 +267,10 @@ ISR( ANA_COMP_vect )
        (byCaptureTime > TIME_SYNC_MIN) )
    {
       /* valid Sync */
-      TP1_ON();
       bySync = 1;
       uiBitIndex = 0x0800;
       byHighBitRecognition = 0;
       uiReceive = 0;
-      TP1_OFF();
    }
    else
    /*if( ((byLevel == 1) &&
@@ -238,13 +284,11 @@ ISR( ANA_COMP_vect )
        (byCaptureTime > TIME_LOW_BIT_L_MIN) )
    {
       /* valid Low Bit */
-      if( (bySync == 1) && (byHighBitRecognition == 0) )
+      byHighBitRecognition = 0;
+      if( bySync == 1 )
       {
-         TP1_ON();
          uiReceive &= ((~uiBitIndex) & 0x0FFF);
          uiBitIndex >>= 1;
-         byHighBitRecognition = 0;
-         TP1_OFF();
       }
       else
       {
@@ -253,7 +297,6 @@ ISR( ANA_COMP_vect )
          uiReceive = 0;
          return;
       }
-
    }
    else
    /*if( ((byLevel == 1) &&
@@ -269,7 +312,6 @@ ISR( ANA_COMP_vect )
       /* valid High Bit */
       if( bySync == 1 )
       {
-         TP1_ON();
          byHighBitRecognition++;
          /* one 0 to 1 transition for High Bit is necessary */
          if( byHighBitRecognition >= 2 )
@@ -278,7 +320,6 @@ ISR( ANA_COMP_vect )
             uiReceive |= (uiBitIndex & 0x0FFF);
             uiBitIndex >>= 1;
          }
-         TP1_OFF();
       }
       else
       {
