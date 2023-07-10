@@ -38,7 +38,7 @@
 #define TIME_HIGH_BIT_L_MAX   10 // digit = 160탎 / (16탎 / digit) = 10
 #define TIME_HIGH_BIT_L_MIN    7 // digit = 120탎 / (16탎 / digit) = 7
 
-//#define DEBOUNCE_THRESHOLD     3
+#define DEBOUNCE_THRESHOLD     3
 
 void(*regFctClbk)(byte);
 //static void DebounceData( byte byRec );
@@ -118,6 +118,8 @@ void Receive_Process( void )
       static unsigned int uiRecVal = 0;
       static byte byRecOk = 0;
       static byte byRec = 0;
+      static unsigned int uiDebounceVal = 0;
+      static byte byDebounceCnt = 0;
 
       TP1_ON();
 
@@ -133,16 +135,33 @@ void Receive_Process( void )
       if( byRecOk != 0 )
       {
          TP2_ON();
-         byRec = (uiRecVal >> 6) & 0x3F;
-    	   if( regFctClbk != 0 )
-	      {
-		      regFctClbk( byRec );
-	      }
+         if( uiDebounceVal == uiRecVal )
+         {
+            byDebounceCnt++;
+            if( byDebounceCnt >= DEBOUNCE_THRESHOLD )
+            {
+               byDebounceCnt = 0;
+               byRec = (uiRecVal >> 6) & 0x3F;
+    	         if( regFctClbk != 0 )
+	            {
+		            regFctClbk( byRec );
+	            }
+            }
+         }
+         else
+         {
+            byDebounceCnt = 0;
+            uiDebounceVal = uiRecVal;
+         }
+      }
+      else
+      {
+         byDebounceCnt = 0;
+         uiDebounceVal = 0;
       }
 
       TP1_OFF();
       TP2_OFF();
-
    }
 
    return;
