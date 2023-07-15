@@ -121,8 +121,6 @@ void Receive_Process( void )
       static unsigned int uiDebounceVal = 0;
       static byte byDebounceCnt = 0;
 
-      TP1_ON();
-
       cli();
       byDataAvailable = 0;
       uiRecVal = uiReceivedData;
@@ -134,12 +132,13 @@ void Receive_Process( void )
 
       if( byRecOk != 0 )
       {
-         TP2_ON();
+         TP1_ON();
          if( uiDebounceVal == uiRecVal )
          {
             byDebounceCnt++;
             if( byDebounceCnt >= DEBOUNCE_THRESHOLD )
             {
+               TP2_ON();
                byDebounceCnt = 0;
                byRec = (uiRecVal >> 6) & 0x3F;
     	         if( regFctClbk != 0 )
