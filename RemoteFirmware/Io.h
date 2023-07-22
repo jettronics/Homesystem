@@ -25,4 +25,5 @@
 
 // Config
 #define DEVICE()    (11)  // 11...15
+#define DEVOFFSET() (10)
 #endif
