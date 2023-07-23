@@ -55,5 +55,5 @@ The Homesystem acts as a gateway and sends push messages on registered Smart pho
 The sensor draws very less standby current so that the battery can be used a very long time.
 
 ## Improvements
-- [ ] HF Transmission for Remote Controller just Parity Bit checked. For more robust transmission a CRC check or similiar check can be used.
+- [x] HF Transmission for Remote Controller just Parity Bit checked. For more robust transmission a CRC check or similiar check can be used.
 - [x] Loud speaker announcement for the Webradio channel when changing the Webradio channel over e.g. Speech commands.
