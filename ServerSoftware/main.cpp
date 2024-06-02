@@ -137,7 +137,7 @@ int main(int argc, char *argv[])
         
         cin.clear();
         fflush(stdin);
-        
+#if 0        
         while( 1 )
         {
             string key = "";
@@ -147,7 +147,7 @@ int main(int argc, char *argv[])
             
             //msgDetConsole.sendClientToServer(key);
         }
-        
+#endif        
         exit(0);
     } 
 
